@@ -92,13 +92,19 @@ body {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  display: none;
+  display: none; /* Corrigido: todas começam ocultas */
   transition: transform 0.3s ease;
+}
+.carousel img.active {
+  display: block; /* Primeira imagem visível */
 }
 #details-carousel img {
   width: 100%;
   height: 300px;
   object-fit: cover;
+}
+#details-carousel img.active {
+  display: block;
 }
 .card h2 { font-size: 18px; margin: 5px 0; }
 .stars { color: #f5c518; }
@@ -185,7 +191,7 @@ body {
 </div>
 
 <script>
-// Lista de farmácias (igual ao seu original)
+// Lista de farmácias
 const farmacias = [
   { name: "FARMÁCIA NISSEI", images: ["https://i.ibb.co/9kzpBJrq/Logopit-1763335405300.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei?igsh=MWJ1MGRzbjg4cG5jYw==", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/" },
   { name: "Farmácia Popular", images: ["https://picsum.photos/500/300?random=13","https://picsum.photos/500/300?random=14"], stars:4, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–15h", address:"Av. Brasil, 220 - Bairro Norte", whatsapp:"5511999990002", instagram:"https://instagram.com/farmacia2", facebook:"https://facebook.com/farmacia2" },
@@ -199,13 +205,12 @@ const farmacias = [
   { name: "Farmácia Bem Cuidar", images: ["https://picsum.photos/500/300?random=29","https://picsum.photos/500/300?random=30"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua Boa Saúde, 10 - Centro", whatsapp:"5511999990010", instagram:"https://instagram.com/farmacia10", facebook:"https://facebook.com/farmacia10" }
 ];
 
-// Função para garantir resolução alta em qualquer imagem
+// Função para carregar imagens com resolução correta
 function loadHighResImage(url, width=350, height=200){
-  // Se for Picsum, ajusta tamanho automaticamente
   if(url.includes("picsum.photos")){
     return url.replace(/(\d+)\/(\d+)/, `${width}/${height}`);
   }
-  return url; // Para URLs externas, mantém a original
+  return url;
 }
 
 // Renderização dos cards
@@ -254,6 +259,7 @@ function showDetails(index){
   document.getElementById('btn-route').onclick=()=>{window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.address)}`,'_blank');};
   document.getElementById('map').src=`https://maps.google.com/maps?q=${encodeURIComponent(f.address)}&output=embed`;
 }
+
 function backToList(){document.getElementById('cards').style.display='flex';document.getElementById('details').classList.remove('active');}
 function filterCards(price){document.querySelectorAll('.card').forEach(c=>{c.style.display=(price==='all'||c.dataset.price===price)?'flex':'none';});}
 function rateStars(e){let val=Math.min(Math.max(parseInt(prompt("Digite sua avaliação 1-5:")),1),5); e.target.innerText="★".repeat(val)+"☆".repeat(5-val);}
