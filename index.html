@@ -29,39 +29,17 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  background-color: var(--card-bg);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.header .logo {
-  font-weight: bold;
-  font-size: 20px;
-  color: var(--primary);
-}
-.header input#search {
-  flex: 1;
-  min-width: 150px;
-  padding: 6px 10px;
-  border: 1px solid var(--secondary);
+.theme-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
   border-radius: 6px;
-  font-size: 14px;
-}
-.header input#search:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 5px rgba(42,157,143,0.5);
-}
-.header .theme-toggle {
-  padding: 6px 12px;
   cursor: pointer;
+  z-index: 1000;
 }
 .filters {
   display: flex;
@@ -179,11 +157,7 @@ body {
 </head>
 <body data-theme="light">
 
-<div class="header">
-  <div class="logo">ClickCidade</div>
-  <input type="text" id="search" placeholder="Buscar farmácia..." oninput="searchFarmacias(this.value)">
-  <button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
-</div>
+<button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
 
 <div class="filters">
   <div class="filter-btn" onclick="filterCards('all')">Todos</div>
@@ -211,7 +185,7 @@ body {
 </div>
 
 <script>
-// Lista de farmácias
+// Lista de farmácias (igual ao seu original)
 const farmacias = [
   { name: "FARMÁCIA NISSEI", images: ["https://i.ibb.co/9kzpBJrq/Logopit-1763335405300.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei?igsh=MWJ1MGRzbjg4cG5jYw==", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/" },
   { name: "Farmácia Popular", images: ["https://picsum.photos/500/300?random=13","https://picsum.photos/500/300?random=14"], stars:4, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–15h", address:"Av. Brasil, 220 - Bairro Norte", whatsapp:"5511999990002", instagram:"https://instagram.com/farmacia2", facebook:"https://facebook.com/farmacia2" },
@@ -225,12 +199,13 @@ const farmacias = [
   { name: "Farmácia Bem Cuidar", images: ["https://picsum.photos/500/300?random=29","https://picsum.photos/500/300?random=30"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua Boa Saúde, 10 - Centro", whatsapp:"5511999990010", instagram:"https://instagram.com/farmacia10", facebook:"https://facebook.com/farmacia10" }
 ];
 
-// Ajusta imagens para alta resolução
-function loadHighResImage(url,width=350,height=200){
+// Função para garantir resolução alta em qualquer imagem
+function loadHighResImage(url, width=350, height=200){
+  // Se for Picsum, ajusta tamanho automaticamente
   if(url.includes("picsum.photos")){
     return url.replace(/(\d+)\/(\d+)/, `${width}/${height}`);
   }
-  return url;
+  return url; // Para URLs externas, mantém a original
 }
 
 // Renderização dos cards
@@ -279,18 +254,11 @@ function showDetails(index){
   document.getElementById('btn-route').onclick=()=>{window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.address)}`,'_blank');};
   document.getElementById('map').src=`https://maps.google.com/maps?q=${encodeURIComponent(f.address)}&output=embed`;
 }
-
 function backToList(){document.getElementById('cards').style.display='flex';document.getElementById('details').classList.remove('active');}
 function filterCards(price){document.querySelectorAll('.card').forEach(c=>{c.style.display=(price==='all'||c.dataset.price===price)?'flex':'none';});}
 function rateStars(e){let val=Math.min(Math.max(parseInt(prompt("Digite sua avaliação 1-5:")),1),5); e.target.innerText="★".repeat(val)+"☆".repeat(5-val);}
 function toggleTheme(){const b=document.body;if(b.dataset.theme==='light'){b.dataset.theme='dark';document.querySelector('.theme-toggle').innerText='☀️ Modo Claro';}else{b.dataset.theme='light';document.querySelector('.theme-toggle').innerText='🌙 Modo Escuro';}}
-function searchFarmacias(query){
-  query = query.toLowerCase();
-  document.querySelectorAll('.card').forEach(card=>{
-    const name = card.querySelector('h2').innerText.toLowerCase();
-    card.style.display = name.includes(query) ? 'flex' : 'none';
-  });
-}
+
 // Carousel automático
 setInterval(()=>{document.querySelectorAll('.carousel').forEach(c=>{nextSlide(c);});},5000);
 </script>
