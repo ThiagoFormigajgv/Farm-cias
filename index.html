@@ -29,17 +29,32 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  background-color: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+  border-bottom: 1px solid #ccc;
+}
+.header input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--secondary);
+  font-size: 16px;
+}
 .theme-toggle {
-  position: fixed;
-  top: 10px;
-  right: 10px;
   background: var(--primary);
   color: #fff;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  z-index: 1000;
 }
 .filters {
   display: flex;
@@ -92,19 +107,13 @@ body {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  display: none; /* Corrigido: todas começam ocultas */
+  display: none;
   transition: transform 0.3s ease;
-}
-.carousel img.active {
-  display: block; /* Primeira imagem visível */
 }
 #details-carousel img {
   width: 100%;
   height: 300px;
   object-fit: cover;
-}
-#details-carousel img.active {
-  display: block;
 }
 .card h2 { font-size: 18px; margin: 5px 0; }
 .stars { color: #f5c518; }
@@ -158,12 +167,17 @@ body {
   #details-carousel img { height: 200px; }
   .card h2 { font-size: 16px; }
   .cards { flex-direction: column; align-items: center; }
+  .header { flex-direction: column; align-items: stretch; gap: 5px; }
+  .header input { width: 100%; }
 }
 </style>
 </head>
 <body data-theme="light">
 
-<button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
+<div class="header">
+  <input type="text" id="search" placeholder="Buscar farmácia..." oninput="searchFarmacia()">
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
+</div>
 
 <div class="filters">
   <div class="filter-btn" onclick="filterCards('all')">Todos</div>
@@ -191,9 +205,9 @@ body {
 </div>
 
 <script>
-// Lista de farmácias
+// Lista completa de farmácias
 const farmacias = [
-  { name: "FARMÁCIA NISSEI", images: ["https://i.ibb.co/9kzpBJrq/Logopit-1763335405300.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei?igsh=MWJ1MGRzbjg4cG5jYw==", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/" },
+  { name: "FARMÁCIA NISSEI", images: ["https://i.ibb.co/9kzpBJrq/Logopit-1763335405300.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/" },
   { name: "Farmácia Popular", images: ["https://picsum.photos/500/300?random=13","https://picsum.photos/500/300?random=14"], stars:4, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–15h", address:"Av. Brasil, 220 - Bairro Norte", whatsapp:"5511999990002", instagram:"https://instagram.com/farmacia2", facebook:"https://facebook.com/farmacia2" },
   { name: "Farmácia Central", images: ["https://picsum.photos/500/300?random=15","https://picsum.photos/500/300?random=16"], stars:5, price:"$$", hours:"Seg–Sex: 07h–21h | Sáb: 08h–16h", address:"Av. Principal, 50 - Centro", whatsapp:"5511999990003", instagram:"https://instagram.com/farmacia3", facebook:"https://facebook.com/farmacia3" },
   { name: "Farmácia Vida", images: ["https://picsum.photos/500/300?random=17","https://picsum.photos/500/300?random=18"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua das Flores, 75 - Bairro Jardim", whatsapp:"5511999990004", instagram:"https://instagram.com/farmacia4", facebook:"https://facebook.com/farmacia4" },
@@ -205,7 +219,7 @@ const farmacias = [
   { name: "Farmácia Bem Cuidar", images: ["https://picsum.photos/500/300?random=29","https://picsum.photos/500/300?random=30"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua Boa Saúde, 10 - Centro", whatsapp:"5511999990010", instagram:"https://instagram.com/farmacia10", facebook:"https://facebook.com/farmacia10" }
 ];
 
-// Função para carregar imagens com resolução correta
+// Função para carregar imagens em alta resolução
 function loadHighResImage(url, width=350, height=200){
   if(url.includes("picsum.photos")){
     return url.replace(/(\d+)\/(\d+)/, `${width}/${height}`);
@@ -213,7 +227,7 @@ function loadHighResImage(url, width=350, height=200){
   return url;
 }
 
-// Renderização dos cards
+// Renderizar cards
 function renderCards(){
   const container=document.getElementById('cards'); container.innerHTML='';
   farmacias.forEach((f,i)=>{
@@ -264,6 +278,7 @@ function backToList(){document.getElementById('cards').style.display='flex';docu
 function filterCards(price){document.querySelectorAll('.card').forEach(c=>{c.style.display=(price==='all'||c.dataset.price===price)?'flex':'none';});}
 function rateStars(e){let val=Math.min(Math.max(parseInt(prompt("Digite sua avaliação 1-5:")),1),5); e.target.innerText="★".repeat(val)+"☆".repeat(5-val);}
 function toggleTheme(){const b=document.body;if(b.dataset.theme==='light'){b.dataset.theme='dark';document.querySelector('.theme-toggle').innerText='☀️ Modo Claro';}else{b.dataset.theme='light';document.querySelector('.theme-toggle').innerText='🌙 Modo Escuro';}}
+function searchFarmacia(){const query=document.getElementById('search').value.toLowerCase();document.querySelectorAll('.card').forEach(card=>{const name=card.querySelector('h2').innerText.toLowerCase();card.style.display=name.includes(query)?'flex':'none';});}
 
 // Carousel automático
 setInterval(()=>{document.querySelectorAll('.carousel').forEach(c=>{nextSlide(c);});},5000);
