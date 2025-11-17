@@ -3,428 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>App de Farmácias</title>
+<title>App de Farmácias - Premium</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f9f9f9;
-  --card-bg: #fff;
-  --text: #333;
-  --primary: #2a9d8f;
-  --secondary: #264653;
+* { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
+:root{
+  --bg:#f4f7f9; --card-bg:#fff; --text:#1f2937; --primary:#06b6d4; --secondary:#0f766e; --shadow:0 4px 12px rgba(0,0,0,0.08); --radius:16px;
 }
-[data-theme="dark"] {
-  --bg: #121212;
-  --card-bg: #1f1f1f;
-  --text: #f0f0f0;
-  --primary: #2a9d8f;
-  --secondary: #264653;
+[data-theme="dark"]{
+  --bg:#1f2937; --card-bg:#374151; --text:#f9fafb; --shadow:0 4px 12px rgba(0,0,0,0.4);
 }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+body{background:var(--bg); color:var(--text); overflow-x:hidden;}
+.header{display:flex; align-items:center; gap:15px; padding:15px 10px; background:var(--card-bg); box-shadow:var(--shadow); position:sticky; top:0; z-index:1000;}
+.search-box{flex:1; display:flex; align-items:center; padding:10px 15px; border-radius:var(--radius); background:var(--bg); border:1px solid #e5e7eb;}
+.search-box i{margin-right:10px; color:var(--secondary);}
+.search-box input{border:none; outline:none; width:100%; font-size:15px; background:transparent; color:var(--text);}
+.theme-toggle{padding:10px 15px; border-radius:var(--radius); font-weight:600; border:none; background:var(--secondary); color:#fff; cursor:pointer;}
+.filters{display:flex; gap:10px; padding:20px 10px; margin-top:10px; overflow-x:auto;}
+.filter-btn{flex-shrink:0; padding:8px 16px; background:var(--card-bg); border:1px solid #ccc; border-radius:10px; cursor:pointer; font-weight:600;}
+.filter-btn.active{background:var(--primary); color:#fff; border-color:var(--primary);}
+.cards{display:grid; grid-template-columns:1fr; gap:25px; padding:20px 10px;}
+.card{background:var(--card-bg); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; transition:transform 0.2s;}
+.card:hover{transform:translateY(-5px);}
+.carousel{height:210px; position:relative;}
+.carousel img{width:100%; height:210px; object-fit:cover; display:none; border-bottom:1px solid #e5e7eb;}
+.carousel img.active{display:block;}
+.card-body{padding:15px; display:flex; flex-direction:column; gap:6px;}
+h2{margin:0; font-size:20px; color:var(--secondary);}
+.stars{color:#fbbf24; font-size:18px;}
+.hours{font-size:14px; color:#6b7280;}
+.price{font-size:18px; font-weight:700; color:var(--primary);}
+.btn{margin-top:8px; padding:10px; border-radius:12px; border:none; background:var(--secondary); color:#fff; font-weight:600; cursor:pointer; transition:0.2s;}
+.btn:hover{background:var(--primary);}
 
-/* -------------------- HEADER MODERNO -------------------- */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: var(--bg);
-  position: sticky;
-  top: 0;
-  z-index: 1001;
-  border-bottom: 1px solid #ccc;
-}
-
-.search-box {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: var(--card-bg);
-  border: 1px solid var(--secondary);
-  border-radius: 6px;
-  padding: 0 10px;
-}
-
-.search-box i {
-  color: var(--secondary);
-  font-size: 18px;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--text);
-  font-size: 16px;
-}
-
-.theme-toggle {
-  white-space: nowrap;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* Responsivo */
-@media (max-width: 600px) {
-  .header { flex-direction: column; }
-  .theme-toggle { width: 100%; }
-  .search-box { width: 100%; }
-}
-
-/* -------------------- RESTO DO LAYOUT (SEU ORIGINAL) -------------------- */
-
-.filters {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  overflow-x: auto;
-}
-.filter-btn {
-  flex-shrink: 0;
-  padding: 5px 10px;
-  border: 1px solid var(--secondary);
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: var(--card-bg);
-  color: var(--text);
-}
-.filter-btn:hover { background-color: var(--primary); color: #fff; }
-
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  padding: 10px;
-}
-
-.card {
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 350px;
-}
-
-.card-body {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1;
-}
-
-/* Corrigido: garante imagens sempre visíveis */
-.carousel {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  touch-action: pan-y;
-  background: #e0e0e0;
-}
-
-.carousel img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: none;
-}
-
-.carousel img.active {
-  display: block;
-}
-
-#details-carousel img {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-}
-
-.card h2 { font-size: 18px; margin: 5px 0; }
-.stars { color: #f5c518; }
-.price { color: var(--primary); font-weight: bold; }
-.hours { font-size: 14px; color: #555; }
-
-.btn {
-  padding: 8px 12px;
-  background-color: var(--secondary);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: auto;
-}
-.btn:hover { background-color: var(--primary); }
-
-.details {
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-}
-.details.active { display: flex; }
-
-.contact-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-.contact-buttons a {
-  flex: 1;
-  text-align: center;
-  padding: 10px;
-  background-color: var(--primary);
-  color: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  text-decoration: none;
-}
-.contact-buttons a:hover { background-color: var(--secondary); }
-
-#map {
-  width: 100%;
-  height: 200px;
-  border-radius: 12px;
-  margin-top: 10px;
-}
-
-@media (max-width: 600px) {
-  .carousel { height: 150px; }
-  #details-carousel img { height: 200px; }
-  .card h2 { font-size: 16px; }
-  .cards { flex-direction: column; align-items: center; }
-}
+/* DETALHES PREMIUM */
+.details{display:none; padding:20px 10px;}
+.details.active{display:block;}
+#details-carousel{height:300px; margin-bottom:15px; border-radius:var(--radius);}
+#details-carousel img{width:100%; height:300px; object-fit:cover; border-radius:var(--radius);}
+.details-info{display:flex; flex-direction:column; gap:6px; margin-bottom:15px;}
+.details-info h2{font-size:26px; color:var(--secondary);}
+.details-info .stars{font-size:20px;}
+.details-info .price, .details-info .hours, .details-info .address{font-size:16px;}
+.contact-buttons{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;}
+.contact-buttons a{flex:1 1 48%; padding:12px; background:var(--primary); border-radius:12px; text-decoration:none; color:#fff; font-weight:600; display:flex; justify-content:center; align-items:center; gap:6px; transition:0.2s;}
+.contact-buttons a:hover{background:var(--secondary);}
+iframe{border-radius:12px; margin-top:10px;}
 </style>
 </head>
-
 <body data-theme="light">
 
-<!-- -------------------- HEADER NOVO -------------------- -->
+<!-- HEADER -->
 <div class="header">
-  <div class="search-box">
-    <i class="fas fa-search"></i>
-    <input type="text" id="search" placeholder="Buscar farmácia..." oninput="searchFarmacia()">
-  </div>
-
-  <button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
+  <div class="search-box"><i class="fas fa-search"></i><input id="search" placeholder="Buscar farmácia..." oninput="searchFarmacia()"></div>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
 </div>
 
-<!-- -------------------- FILTROS -------------------- -->
+<!-- FILTROS -->
 <div class="filters">
-  <div class="filter-btn" onclick="filterCards('all')">Todos</div>
-  <div class="filter-btn" onclick="filterCards('$$')">$$</div>
-  <div class="filter-btn" onclick="filterCards('$$$')">$$$</div>
+  <div class="filter-btn active" onclick="filterCards('all', this)">Todos</div>
+  <div class="filter-btn" onclick="filterCards('$', this)">$</div>
+  <div class="filter-btn" onclick="filterCards('$$', this)">$$</div>
+  <div class="filter-btn" onclick="filterCards('$$$', this)">$$$</div>
 </div>
 
-<!-- -------------------- CARDS -------------------- -->
+<!-- CARDS -->
 <div class="cards" id="cards"></div>
 
-<!-- -------------------- DETALHES -------------------- -->
+<!-- DETALHES PREMIUM -->
 <div class="details" id="details">
   <button class="btn" onclick="backToList()">← Voltar</button>
-  <div class="carousel" id="details-carousel"></div>
-  <h2 id="details-name">Farmácia</h2>
-  <div class="stars" data-value="0" onclick="rateStars(event)">☆☆☆☆☆</div>
-  <div class="price" id="details-price"></div>
-  <div class="hours" id="details-hours"></div>
-  <div class="address" id="details-address"></div>
-  <iframe id="map" src="" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-
+  <div id="details-carousel" class="carousel"></div>
+  <div class="details-info">
+    <h2 id="details-name"></h2>
+    <div class="stars" id="details-stars"></div>
+    <div class="price" id="details-price"></div>
+    <div class="hours" id="details-hours"></div>
+    <div class="address" id="details-address"></div>
+  </div>
+  <iframe id="map" width="100%" height="260" loading="lazy"></iframe>
   <div class="contact-buttons">
-    <a href="#" target="_blank" id="btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-    <a href="#" target="_blank" id="btn-instagram"><i class="fab fa-instagram"></i> Instagram</a>
-    <a href="#" target="_blank" id="btn-facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
-    <a href="#" target="_blank" id="btn-route"><i class="fas fa-map-marker-alt"></i> Rota</a>
+    <a id="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a id="btn-instagram" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+    <a id="btn-facebook" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+    <a id="btn-route" target="_blank"><i class="fas fa-map-marker-alt"></i> Rota</a>
   </div>
 </div>
 
 <script>
-/* -------------------- LISTA DAS FARMÁCIAS -------------------- */
+// FARMÁCIAS (mantidas)
 const farmacias = [
-  { name: "FARMÁCIA NISSEI", images: ["https://i.ibb.co/MxS2z08V/Logopit-1763338127754.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/" },
-  { name: "FARMAIS", images: ["https://i.ibb.co/WvdtgpYx/Logopit-1763339111054.jpg","https://i.ibb.co/WvdtgpYx/Logopit-1763339111054.jpg"], stars:4, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–15h", address:"Av. Brasil, 220 - Bairro Norte", whatsapp:"5511999990002", instagram:"https://instagram.com/farmacia2", facebook:"https://facebook.com/farmacia2" },
-  { name: "FARMÁCIA DA FAMÍLIA", images: ["https://i.ibb.co/WvdtgpYx/Logopit-1763339111054.jpg","https://i.ibb.co/WvdtgpYx/Logopit-1763339111054.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–21h | Sáb: 08h–16h", address:"Av. Principal, 50 - Centro", whatsapp:"5511999990003", instagram:"https://instagram.com/farmacia3", facebook:"https://facebook.com/farmacia3" },
-  { name: "Farmácia Vida", images: ["https://picsum.photos/500/300?random=17","https://picsum.photos/500/300?random=18"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua das Flores, 75 - Bairro Jardim", whatsapp:"5511999990004", instagram:"https://instagram.com/farmacia4", facebook:"https://facebook.com/farmacia4" },
-  { name: "Farmácia Bem Estar", images: ["https://picsum.photos/500/300?random=19","https://picsum.photos/500/300?random=20"], stars:5, price:"$$$", hours:"Seg–Sex: 08h–20h | Sáb: 08h–15h", address:"Av. das Nações, 120 - Centro", whatsapp:"5511999990005", instagram:"https://instagram.com/farmacia5", facebook:"https://facebook.com/farmacia5" },
-  { name: "Farmácia Econômica", images: ["https://picsum.photos/500/300?random=21","https://picsum.photos/500/300?random=22"], stars:4, price:"$", hours:"Seg–Sex: 08h–18h | Sáb: 08h–13h", address:"Rua da Paz, 30 - Bairro Norte", whatsapp:"5511999990006", instagram:"https://instagram.com/farmacia6", facebook:"https://facebook.com/farmacia6" },
-  { name: "Farmácia Vida Saudável", images: ["https://picsum.photos/500/300?random=23","https://picsum.photos/500/300?random=24"], stars:5, price:"$$", hours:"Seg–Sex: 08h–20h | Sáb: 08h–14h", address:"Rua Verde, 88 - Bairro Jardim", whatsapp:"5511999990007", instagram:"https://instagram.com/farmacia7", facebook:"https://facebook.com/farmacia7" },
-  { name: "Farmácia Central Norte", images: ["https://picsum.photos/500/300?random=25","https://picsum.photos/500/300?random=26"], stars:4, price:"$$", hours:"Seg–Sex: 07h–20h | Sáb: 08h–14h", address:"Av. Norte, 200 - Bairro Norte", whatsapp:"5511999990008", instagram:"https://instagram.com/farmacia8", facebook:"https://facebook.com/farmacia8" },
-  { name: "Farmácia Nova Vida", images: ["https://picsum.photos/500/300?random=27","https://picsum.photos/500/300?random=28"], stars:5, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–16h", address:"Rua Nova, 150 - Bairro Jardim", whatsapp:"5511999990009", instagram:"https://instagram.com/farmacia9", facebook:"https://facebook.com/farmacia9" },
-  { name: "Farmácia Bem Cuidar", images: ["https://picsum.photos/500/300?random=29","https://picsum.photos/500/300?random=30"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua Boa Saúde, 10 - Centro", whatsapp:"5511999990010", instagram:"https://instagram.com/farmacia10", facebook:"https://facebook.com/farmacia10" }
+{ name:"FARMÁCIA NISSEI", images:["https://i.ibb.co/9kzpBJrq/Logopit-1763335405300.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/"},
+{ name:"FARMAISr", images:["https://picsum.photos/500/300?random=13","https://picsum.photos/500/300?random=14"], stars:4, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–15h", address:"Av. Brasil, 220 - Bairro Norte", whatsapp:"5511999990002", instagram:"https://instagram.com/farmacia2", facebook:"https://facebook.com/farmacia2"},
+{ name:"FARMÁCIA DA FAMÍLIA", images:["https://picsum.photos/500/300?random=15","https://picsum.photos/500/300?random=16"], stars:5, price:"$$", hours:"Seg–Sex: 07h–21h | Sáb: 08h–16h", address:"Av. Principal, 50 - Centro", whatsapp:"5511999990003", instagram:"https://instagram.com/farmacia3", facebook:"https://facebook.com/farmacia3"},
+{ name:"NOSSA FARMA", images:["https://picsum.photos/500/300?random=17","https://picsum.photos/500/300?random=18"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua das Flores, 75 - Bairro Jardim", whatsapp:"5511999990004", instagram:"https://instagram.com/farmacia4", facebook:"https://facebook.com/farmacia4"},
+{ name:"FARMÁCIA POPULAR", images:["https://picsum.photos/500/300?random=19","https://picsum.photos/500/300?random=20"], stars:5, price:"$$$", hours:"Seg–Sex: 08h–20h | Sáb: 08h–15h", address:"Av. das Nações, 120 - Centro", whatsapp:"5511999990005", instagram:"https://instagram.com/farmacia5", facebook:"https://facebook.com/farmacia5"},
+{ name:"Farmácia Econômica", images:["https://picsum.photos/500/300?random=21","https://picsum.photos/500/300?random=22"], stars:4, price:"$", hours:"Seg–Sex: 08h–18h | Sáb: 08h–13h", address:"Rua da Paz, 30 - Bairro Norte", whatsapp:"5511999990006", instagram:"https://instagram.com/farmacia6", facebook:"https://facebook.com/farmacia6"},
+{ name:"Farmácia Vida Saudável", images:["https://picsum.photos/500/300?random=23","https://picsum.photos/500/300?random=24"], stars:5, price:"$$", hours:"Seg–Sex: 08h–20h | Sáb: 08h–14h", address:"Rua Verde, 88 - Bairro Jardim", whatsapp:"5511999990007", instagram:"https://instagram.com/farmacia7", facebook:"https://facebook.com/farmacia7"},
+{ name:"Farmácia Central Norte", images:["https://picsum.photos/500/300?random=25","https://picsum.photos/500/300?random=26"], stars:4, price:"$$", hours:"Seg–Sex: 07h–20h | Sáb: 08h–14h", address:"Av. Norte, 200 - Bairro Norte", whatsapp:"5511999990008", instagram:"https://instagram.com/farmacia8", facebook:"https://facebook.com/farmacia8"},
+{ name:"Farmácia Nova Vida", images:["https://picsum.photos/500/300?random=27","https://picsum.photos/500/300?random=28"], stars:5, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–16h", address:"Rua Nova, 150 - Bairro Jardim", whatsapp:"5511999990009", instagram:"https://instagram.com/farmacia9", facebook:"https://facebook.com/farmacia9"},
+{ name:"Farmácia Bem Cuidar", images:["https://picsum.photos/500/300?random=29","https://picsum.photos/500/300?random=30"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua Boa Saúde, 10 - Centro", whatsapp:"5511999990010", instagram:"https://instagram.com/farmacia10", facebook:"https://facebook.com/farmacia10"}
 ];
 
-/* -------------------- GERAÇÃO DOS CARDS -------------------- */
-function loadHighResImage(url, width=350, height=200){
-  if(url.includes("picsum.photos")){
-    return url.replace(/(\d+)\/(\d+)/, `${width}/${height}`);
-  }
-  return url;
-}
-
+let currentFilter='all';
+function getStarHTML(n){return "★".repeat(n)+"☆".repeat(5-n);}
 function renderCards(){
-  const container=document.getElementById('cards');
-  container.innerHTML='';
-
+  const cards=document.getElementById('cards'); cards.innerHTML="";
   farmacias.forEach((f,i)=>{
-    const card=document.createElement('div');
-    card.className='card';
-    card.dataset.price=f.price;
-
-    const carousel=document.createElement('div');
-    carousel.className='carousel';
-
-    f.images.forEach((img,idx)=>{
-      const image=document.createElement('img');
-      image.src=loadHighResImage(img);
-      if(idx===0) image.classList.add('active');
-      carousel.appendChild(image);
-    });
-
+    const card=document.createElement('div'); card.className="card"; card.dataset.price=f.price;
+    const carousel=document.createElement('div'); carousel.className="carousel";
+    f.images.forEach((src,j)=>{let img=document.createElement('img'); img.src=src; if(j===0) img.classList.add("active"); carousel.appendChild(img);});
     addSwipe(carousel);
-
-    const body=document.createElement('div');
-    body.className='card-body';
-    body.innerHTML=`<h2>${f.name}</h2>
-    <div class="stars">${"★".repeat(f.stars)+"☆".repeat(5-f.stars)}</div>
-    <div class="price">${f.price}</div>
-    <div class="hours">${f.hours}</div>
-    <button class="btn" onclick="showDetails(${i})">Ver detalhes</button>`;
-
-    card.appendChild(carousel);
-    card.appendChild(body);
-    container.appendChild(card);
+    const body=document.createElement('div'); body.className="card-body";
+    body.innerHTML=`<h2>${f.name}</h2><div class="stars">${getStarHTML(f.stars)}</div><div class="hours">${f.hours}</div><div class="price">${f.price}</div><button class="btn" onclick="event.stopPropagation(); showDetails(${i})">Ver Detalhes</button>`;
+    card.onclick=()=>showDetails(i);
+    card.appendChild(carousel); card.appendChild(body); cards.appendChild(card);
   });
 }
 renderCards();
 
-/* -------------------- CARROSSEL -------------------- */
-function addSwipe(c){
-  let sX=0,eX=0;
-  c.addEventListener('touchstart',e=>{sX=e.touches[0].clientX;});
-  c.addEventListener('touchmove',e=>{eX=e.touches[0].clientX;});
-  c.addEventListener('touchend',()=>{
-    if(sX-eX>50){nextSlide(c);}
-    if(eX-sX>50){prevSlide(c);}
-  });
+/* DETALHES */
+function showDetails(i){
+  const f=farmacias[i];
+  document.getElementById('cards').style.display="none";
+  document.querySelector('.filters').style.display="none";
+  document.querySelector('.search-box').style.display="none";
+  const d=document.getElementById('details'); d.classList.add("active");
+  const dc=document.getElementById('details-carousel'); dc.innerHTML="";
+  f.images.forEach((src,j)=>{let img=document.createElement('img'); img.src=src; if(j===0) img.classList.add("active"); dc.appendChild(img);});
+  addSwipe(dc);
+  document.getElementById("details-name").innerText=f.name;
+  document.getElementById("details-stars").innerHTML=getStarHTML(f.stars);
+  document.getElementById("details-price").innerText="Preço: "+f.price;
+  document.getElementById("details-hours").innerText="Horário: "+f.hours;
+  document.getElementById("details-address").innerText="Endereço: "+f.address;
+  document.getElementById("btn-whatsapp").href=`https://wa.me/${f.whatsapp}`;
+  document.getElementById("btn-instagram").href=f.instagram;
+  document.getElementById("btn-facebook").href=f.facebook;
+  document.getElementById("btn-route").href=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.address)}`;
+  document.getElementById("map").src=`https://maps.google.com/maps?q=${encodeURIComponent(f.address)}&output=embed`;
 }
-
-function nextSlide(c){
-  const imgs=c.querySelectorAll('img');
-  let i=Array.from(imgs).findIndex(img=>img.classList.contains('active'));
-  imgs[i].classList.remove('active');
-  i=(i+1)%imgs.length;
-  imgs[i].classList.add('active');
-}
-
-function prevSlide(c){
-  const imgs=c.querySelectorAll('img');
-  let i=Array.from(imgs).findIndex(img=>img.classList.contains('active'));
-  imgs[i].classList.remove('active');
-  i=(i-1+imgs.length)%imgs.length;
-  imgs[i].classList.add('active');
-}
-
-/* -------------------- DETALHES -------------------- */
-function showDetails(index){
-  const f=farmacias[index];
-
-  document.getElementById('cards').style.display='none';
-
-  const d=document.getElementById('details');
-  d.classList.add('active');
-
-  const c=document.getElementById('details-carousel');
-  c.innerHTML='';
-
-  f.images.forEach((img,i)=>{
-    const image=document.createElement('img');
-    image.src=loadHighResImage(img,1000,600);
-    if(i===0) image.classList.add('active');
-    c.appendChild(image);
-  });
-
-  addSwipe(c);
-
-  document.getElementById('details-name').innerText=f.name;
-  document.getElementById('details-price').innerText=f.price;
-  document.getElementById('details-hours').innerText=f.hours;
-  document.getElementById('details-address').innerText=f.address;
-
-  document.getElementById('btn-whatsapp').onclick=()=>{window.open(`https://wa.me/${f.whatsapp}`,'_blank');};
-  document.getElementById('btn-instagram').onclick=()=>{window.open(f.instagram,'_blank');};
-  document.getElementById('btn-facebook').onclick=()=>{window.open(f.facebook,'_blank');};
-  document.getElementById('btn-route').onclick=()=>{window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.address)}`,'_blank');};
-
-  document.getElementById('map').src=`https://maps.google.com/maps?q=${encodeURIComponent(f.address)}&output=embed`;
-}
-
 function backToList(){
-  document.getElementById('cards').style.display='flex';
-  document.getElementById('details').classList.remove('active');
+  document.getElementById('details').classList.remove("active");
+  document.querySelector('.filters').style.display="flex";
+  document.querySelector('.search-box').style.display="flex";
+  document.getElementById('cards').style.display="grid";
 }
-
-/* -------------------- FILTROS -------------------- */
-function filterCards(price){
-  document.querySelectorAll('.card').forEach(c=>{
-    c.style.display = (price==='all'||c.dataset.price===price) ? 'flex':'none';
-  });
-}
-
-/* -------------------- AVALIAÇÃO -------------------- */
-function rateStars(e){
-  let val=Math.min(Math.max(parseInt(prompt("Digite sua avaliação 1-5:")),1),5);
-  e.target.innerText="★".repeat(val)+"☆".repeat(5-val);
-}
-
-/* -------------------- TEMA -------------------- */
-function toggleTheme(){
-  const b=document.body;
-  if(b.dataset.theme==='light'){
-    b.dataset.theme='dark';
-    document.querySelector('.theme-toggle').innerText='☀️ Modo Claro';
-  } else {
-    b.dataset.theme='light';
-    document.querySelector('.theme-toggle').innerText='🌙 Modo Escuro';
-  }
-}
-
-/* -------------------- BUSCA -------------------- */
-function searchFarmacia(){
-  const query=document.getElementById('search').value.toLowerCase();
-  document.querySelectorAll('.card').forEach(card=>{
-    const name=card.querySelector('h2').innerText.toLowerCase();
-    card.style.display=name.includes(query)?'flex':'none';
-  });
-}
-
-/* -------------------- CARROSSEL AUTOMÁTICO -------------------- */
-setInterval(()=>{
-  document.querySelectorAll('.carousel').forEach(c=>{nextSlide(c);});
-},5000);
+/* CARROSSEL */
+function addSwipe(c){let startX=0,endX=0;c.addEventListener('touchstart',e=>startX=e.touches[0].clientX);c.addEventListener('touchend',e=>{endX=e.changedTouches[0].clientX;if(startX-endX>50) nextSlide(c);if(endX-startX>50) prevSlide(c);});}
+function nextSlide(c){const imgs=c.querySelectorAll('img'); let i=[...imgs].findIndex(x=>x.classList.contains("active")); imgs[i].classList.remove("active"); imgs[(i+1)%imgs.length].classList.add("active");}
+function prevSlide(c){const imgs=c.querySelectorAll('img'); let i=[...imgs].findIndex(x=>x.classList.contains("active")); imgs[i].classList.remove("active"); imgs[(i-1+imgs.length)%imgs.length].classList.add("active");}
+setInterval(()=>{if(document.getElementById('cards').style.display!=="none"){document.querySelectorAll('.carousel').forEach(c=>nextSlide(c));}},5000);
+/* FILTRO */
+function filterCards(type, el){currentFilter=type; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove("active")); el.classList.add("active"); document.querySelectorAll(".card").forEach(card=>{const okFilter=(type==="all" || card.dataset.price===type); const okSearch=card.querySelector("h2").innerText.toLowerCase().includes(document.getElementById("search").value.toLowerCase()); card.style.display=(okFilter && okSearch)?"block":"none";});}
+/* BUSCA */
+function searchFarmacia(){filterCards(currentFilter, document.querySelector(`.filter-btn[data=${currentFilter}]`));}
+/* TEMA */
+function toggleTheme(){let b=document.body; b.dataset.theme=(b.dataset.theme==="light")?"dark":"light";}
 </script>
-
 </body>
 </html>
+
