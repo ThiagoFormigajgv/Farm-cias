@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>App de Farmácias</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 :root {
   --bg: #f9f9f9;
@@ -29,26 +30,47 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+
+/* -------------------- HEADER MODERNO -------------------- */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
   gap: 10px;
+  padding: 10px;
   background-color: var(--bg);
   position: sticky;
   top: 0;
   z-index: 1001;
   border-bottom: 1px solid #ccc;
 }
-.header input {
+
+.search-box {
   flex: 1;
-  padding: 8px 12px;
-  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
   border: 1px solid var(--secondary);
+  border-radius: 6px;
+  padding: 0 10px;
+}
+
+.search-box i {
+  color: var(--secondary);
+  font-size: 18px;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
   font-size: 16px;
 }
+
 .theme-toggle {
+  white-space: nowrap;
   background: var(--primary);
   color: #fff;
   border: none;
@@ -56,6 +78,16 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .header { flex-direction: column; }
+  .theme-toggle { width: 100%; }
+  .search-box { width: 100%; }
+}
+
+/* -------------------- RESTO DO LAYOUT (SEU ORIGINAL) -------------------- */
+
 .filters {
   display: flex;
   gap: 10px;
@@ -72,6 +104,7 @@ body {
   color: var(--text);
 }
 .filter-btn:hover { background-color: var(--primary); color: #fff; }
+
 .cards {
   display: flex;
   flex-wrap: wrap;
@@ -79,6 +112,7 @@ body {
   gap: 15px;
   padding: 10px;
 }
+
 .card {
   background-color: var(--card-bg);
   border-radius: 12px;
@@ -89,6 +123,7 @@ body {
   width: 100%;
   max-width: 350px;
 }
+
 .card-body {
   padding: 10px;
   display: flex;
@@ -96,29 +131,39 @@ body {
   gap: 5px;
   flex: 1;
 }
+
+/* Corrigido: garante imagens sempre visíveis */
 .carousel {
   position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
   touch-action: pan-y;
+  background: #e0e0e0;
 }
+
 .carousel img {
   width: 100%;
   height: 200px;
   object-fit: cover;
   display: none;
-  transition: transform 0.3s ease;
 }
+
+.carousel img.active {
+  display: block;
+}
+
 #details-carousel img {
   width: 100%;
   height: 300px;
   object-fit: cover;
 }
+
 .card h2 { font-size: 18px; margin: 5px 0; }
 .stars { color: #f5c518; }
 .price { color: var(--primary); font-weight: bold; }
 .hours { font-size: 14px; color: #555; }
+
 .btn {
   padding: 8px 12px;
   background-color: var(--secondary);
@@ -129,6 +174,7 @@ body {
   margin-top: auto;
 }
 .btn:hover { background-color: var(--primary); }
+
 .details {
   display: none;
   flex-direction: column;
@@ -136,6 +182,7 @@ body {
   padding: 10px;
 }
 .details.active { display: flex; }
+
 .contact-buttons {
   display: flex;
   gap: 10px;
@@ -156,37 +203,46 @@ body {
   text-decoration: none;
 }
 .contact-buttons a:hover { background-color: var(--secondary); }
+
 #map {
   width: 100%;
   height: 200px;
   border-radius: 12px;
   margin-top: 10px;
 }
+
 @media (max-width: 600px) {
   .carousel { height: 150px; }
   #details-carousel img { height: 200px; }
   .card h2 { font-size: 16px; }
   .cards { flex-direction: column; align-items: center; }
-  .header { flex-direction: column; align-items: stretch; gap: 5px; }
-  .header input { width: 100%; }
 }
 </style>
 </head>
+
 <body data-theme="light">
 
+<!-- -------------------- HEADER NOVO -------------------- -->
 <div class="header">
-  <input type="text" id="search" placeholder="Buscar farmácia..." oninput="searchFarmacia()">
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="search" placeholder="Buscar farmácia..." oninput="searchFarmacia()">
+  </div>
+
   <button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
 </div>
 
+<!-- -------------------- FILTROS -------------------- -->
 <div class="filters">
   <div class="filter-btn" onclick="filterCards('all')">Todos</div>
   <div class="filter-btn" onclick="filterCards('$$')">$$</div>
   <div class="filter-btn" onclick="filterCards('$$$')">$$$</div>
 </div>
 
+<!-- -------------------- CARDS -------------------- -->
 <div class="cards" id="cards"></div>
 
+<!-- -------------------- DETALHES -------------------- -->
 <div class="details" id="details">
   <button class="btn" onclick="backToList()">← Voltar</button>
   <div class="carousel" id="details-carousel"></div>
@@ -196,6 +252,7 @@ body {
   <div class="hours" id="details-hours"></div>
   <div class="address" id="details-address"></div>
   <iframe id="map" src="" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+
   <div class="contact-buttons">
     <a href="#" target="_blank" id="btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
     <a href="#" target="_blank" id="btn-instagram"><i class="fab fa-instagram"></i> Instagram</a>
@@ -205,7 +262,7 @@ body {
 </div>
 
 <script>
-// Lista completa de farmácias
+/* -------------------- LISTA DAS FARMÁCIAS -------------------- */
 const farmacias = [
   { name: "FARMÁCIA NISSEI", images: ["https://i.ibb.co/9kzpBJrq/Logopit-1763335405300.jpg","https://i.ibb.co/V0WrMH5g/Logopit-1763333811701.jpg"], stars:5, price:"$$", hours:"Seg–Sex: 07h–23h | Sáb: 07h–22h | Dom: 09h - 21h", address:"Conde Francisco Matarazzo, 200 - Centro", whatsapp:"5543988380691", instagram:"https://www.instagram.com/farmaciasnissei", facebook:"https://www.facebook.com/share/1Bs5xJ1xza/" },
   { name: "Farmácia Popular", images: ["https://picsum.photos/500/300?random=13","https://picsum.photos/500/300?random=14"], stars:4, price:"$$$", hours:"Seg–Sex: 08h–21h | Sáb: 08h–15h", address:"Av. Brasil, 220 - Bairro Norte", whatsapp:"5511999990002", instagram:"https://instagram.com/farmacia2", facebook:"https://facebook.com/farmacia2" },
@@ -219,7 +276,7 @@ const farmacias = [
   { name: "Farmácia Bem Cuidar", images: ["https://picsum.photos/500/300?random=29","https://picsum.photos/500/300?random=30"], stars:4, price:"$$", hours:"Seg–Sex: 08h–19h | Sáb: 08h–14h", address:"Rua Boa Saúde, 10 - Centro", whatsapp:"5511999990010", instagram:"https://instagram.com/farmacia10", facebook:"https://facebook.com/farmacia10" }
 ];
 
-// Função para carregar imagens em alta resolução
+/* -------------------- GERAÇÃO DOS CARDS -------------------- */
 function loadHighResImage(url, width=350, height=200){
   if(url.includes("picsum.photos")){
     return url.replace(/(\d+)\/(\d+)/, `${width}/${height}`);
@@ -227,61 +284,147 @@ function loadHighResImage(url, width=350, height=200){
   return url;
 }
 
-// Renderizar cards
 function renderCards(){
-  const container=document.getElementById('cards'); container.innerHTML='';
+  const container=document.getElementById('cards');
+  container.innerHTML='';
+
   farmacias.forEach((f,i)=>{
-    const card=document.createElement('div'); card.className='card'; card.dataset.price=f.price;
-    const carousel=document.createElement('div'); carousel.className='carousel';
+    const card=document.createElement('div');
+    card.className='card';
+    card.dataset.price=f.price;
+
+    const carousel=document.createElement('div');
+    carousel.className='carousel';
+
     f.images.forEach((img,idx)=>{
       const image=document.createElement('img');
       image.src=loadHighResImage(img);
-      if(idx===0) image.classList.add('active'); carousel.appendChild(image);
+      if(idx===0) image.classList.add('active');
+      carousel.appendChild(image);
     });
+
     addSwipe(carousel);
-    const body=document.createElement('div'); body.className='card-body';
-    body.innerHTML=`<h2>${f.name}</h2><div class="stars">${"★".repeat(f.stars)+"☆".repeat(5-f.stars)}</div><div class="price">${f.price}</div><div class="hours">${f.hours}</div><button class="btn" onclick="showDetails(${i})">Ver detalhes</button>`;
-    card.appendChild(carousel); card.appendChild(body); container.appendChild(card);
+
+    const body=document.createElement('div');
+    body.className='card-body';
+    body.innerHTML=`<h2>${f.name}</h2>
+    <div class="stars">${"★".repeat(f.stars)+"☆".repeat(5-f.stars)}</div>
+    <div class="price">${f.price}</div>
+    <div class="hours">${f.hours}</div>
+    <button class="btn" onclick="showDetails(${i})">Ver detalhes</button>`;
+
+    card.appendChild(carousel);
+    card.appendChild(body);
+    container.appendChild(card);
   });
 }
 renderCards();
 
-// Swipe
-function addSwipe(c){let sX=0,eX=0;c.addEventListener('touchstart',e=>{sX=e.touches[0].clientX;});c.addEventListener('touchmove',e=>{eX=e.touches[0].clientX;});c.addEventListener('touchend',e=>{if(sX-eX>50){nextSlide(c);} if(eX-sX>50){prevSlide(c);}});}
-function nextSlide(c){const imgs=c.querySelectorAll('img');let i=Array.from(imgs).findIndex(img=>img.classList.contains('active')); imgs[i].classList.remove('active'); i=(i+1)%imgs.length; imgs[i].classList.add('active');}
-function prevSlide(c){const imgs=c.querySelectorAll('img');let i=Array.from(imgs).findIndex(img=>img.classList.contains('active')); imgs[i].classList.remove('active'); i=(i-1+imgs.length)%imgs.length; imgs[i].classList.add('active');}
+/* -------------------- CARROSSEL -------------------- */
+function addSwipe(c){
+  let sX=0,eX=0;
+  c.addEventListener('touchstart',e=>{sX=e.touches[0].clientX;});
+  c.addEventListener('touchmove',e=>{eX=e.touches[0].clientX;});
+  c.addEventListener('touchend',()=>{
+    if(sX-eX>50){nextSlide(c);}
+    if(eX-sX>50){prevSlide(c);}
+  });
+}
 
-// Detalhes
+function nextSlide(c){
+  const imgs=c.querySelectorAll('img');
+  let i=Array.from(imgs).findIndex(img=>img.classList.contains('active'));
+  imgs[i].classList.remove('active');
+  i=(i+1)%imgs.length;
+  imgs[i].classList.add('active');
+}
+
+function prevSlide(c){
+  const imgs=c.querySelectorAll('img');
+  let i=Array.from(imgs).findIndex(img=>img.classList.contains('active'));
+  imgs[i].classList.remove('active');
+  i=(i-1+imgs.length)%imgs.length;
+  imgs[i].classList.add('active');
+}
+
+/* -------------------- DETALHES -------------------- */
 function showDetails(index){
   const f=farmacias[index];
+
   document.getElementById('cards').style.display='none';
-  const d=document.getElementById('details'); d.classList.add('active');
-  const c=document.getElementById('details-carousel'); c.innerHTML='';
+
+  const d=document.getElementById('details');
+  d.classList.add('active');
+
+  const c=document.getElementById('details-carousel');
+  c.innerHTML='';
+
   f.images.forEach((img,i)=>{
     const image=document.createElement('img');
     image.src=loadHighResImage(img,1000,600);
-    if(i===0) image.classList.add('active'); c.appendChild(image);
+    if(i===0) image.classList.add('active');
+    c.appendChild(image);
   });
+
   addSwipe(c);
+
   document.getElementById('details-name').innerText=f.name;
   document.getElementById('details-price').innerText=f.price;
   document.getElementById('details-hours').innerText=f.hours;
   document.getElementById('details-address').innerText=f.address;
+
   document.getElementById('btn-whatsapp').onclick=()=>{window.open(`https://wa.me/${f.whatsapp}`,'_blank');};
   document.getElementById('btn-instagram').onclick=()=>{window.open(f.instagram,'_blank');};
   document.getElementById('btn-facebook').onclick=()=>{window.open(f.facebook,'_blank');};
   document.getElementById('btn-route').onclick=()=>{window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.address)}`,'_blank');};
+
   document.getElementById('map').src=`https://maps.google.com/maps?q=${encodeURIComponent(f.address)}&output=embed`;
 }
 
-function backToList(){document.getElementById('cards').style.display='flex';document.getElementById('details').classList.remove('active');}
-function filterCards(price){document.querySelectorAll('.card').forEach(c=>{c.style.display=(price==='all'||c.dataset.price===price)?'flex':'none';});}
-function rateStars(e){let val=Math.min(Math.max(parseInt(prompt("Digite sua avaliação 1-5:")),1),5); e.target.innerText="★".repeat(val)+"☆".repeat(5-val);}
-function toggleTheme(){const b=document.body;if(b.dataset.theme==='light'){b.dataset.theme='dark';document.querySelector('.theme-toggle').innerText='☀️ Modo Claro';}else{b.dataset.theme='light';document.querySelector('.theme-toggle').innerText='🌙 Modo Escuro';}}
-function searchFarmacia(){const query=document.getElementById('search').value.toLowerCase();document.querySelectorAll('.card').forEach(card=>{const name=card.querySelector('h2').innerText.toLowerCase();card.style.display=name.includes(query)?'flex':'none';});}
+function backToList(){
+  document.getElementById('cards').style.display='flex';
+  document.getElementById('details').classList.remove('active');
+}
 
-// Carousel automático
-setInterval(()=>{document.querySelectorAll('.carousel').forEach(c=>{nextSlide(c);});},5000);
+/* -------------------- FILTROS -------------------- */
+function filterCards(price){
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = (price==='all'||c.dataset.price===price) ? 'flex':'none';
+  });
+}
+
+/* -------------------- AVALIAÇÃO -------------------- */
+function rateStars(e){
+  let val=Math.min(Math.max(parseInt(prompt("Digite sua avaliação 1-5:")),1),5);
+  e.target.innerText="★".repeat(val)+"☆".repeat(5-val);
+}
+
+/* -------------------- TEMA -------------------- */
+function toggleTheme(){
+  const b=document.body;
+  if(b.dataset.theme==='light'){
+    b.dataset.theme='dark';
+    document.querySelector('.theme-toggle').innerText='☀️ Modo Claro';
+  } else {
+    b.dataset.theme='light';
+    document.querySelector('.theme-toggle').innerText='🌙 Modo Escuro';
+  }
+}
+
+/* -------------------- BUSCA -------------------- */
+function searchFarmacia(){
+  const query=document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(card=>{
+    const name=card.querySelector('h2').innerText.toLowerCase();
+    card.style.display=name.includes(query)?'flex':'none';
+  });
+}
+
+/* -------------------- CARROSSEL AUTOMÁTICO -------------------- */
+setInterval(()=>{
+  document.querySelectorAll('.carousel').forEach(c=>{nextSlide(c);});
+},5000);
 </script>
+
 </body>
 </html>
